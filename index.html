@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Acerto</title>
+<meta name="description" content="Controle de parcelas e acertos de conta, com mensagem pronta para o WhatsApp.">
+<meta name="theme-color" content="#ffd84a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#101418);--ink:light-dark(#101418,#eef1f4);--mute:light-dark(#5b6570,#9aa4ae);--line:light-dark(#e3e6ea,#2a313a);--card:light-dark(#f6f7f9,#171d24);--y:#ffd84a;--yi:#101418;--wa:#128c4a;--red:light-dark(#b42318,#ff8a80)}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+main{max-width:560px;margin:0 auto;padding:calc(16px + env(safe-area-inset-top)) 16px calc(48px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;min-height:44px}
+.brand{font-weight:800;font-size:20px;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)}
+.brand img{width:28px;height:28px;border-radius:7px}
+h1{font-size:15px;font-weight:600;color:var(--mute);margin:0 0 2px}
+.who{font-size:24px;font-weight:800;margin:0 0 16px;line-height:1.2}
+h2{font-size:17px;margin:26px 0 10px;font-weight:800}
+.key{background:var(--y);color:var(--yi);border-radius:14px;padding:18px 20px}
+.key small{display:block;font-weight:600;font-size:14px}
+.key b{display:block;font-size:clamp(34px,10vw,48px);line-height:1.05;font-weight:800;white-space:nowrap}
+.key .sub{font-size:14px;margin-top:6px}
+.bar{height:8px;background:rgba(16,20,24,.15);border-radius:8px;margin-top:12px;overflow:hidden}
+.bar i{display:block;height:100%;background:#101418;border-radius:8px;transition:width .4s}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+.carne{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px}
+.stub{border:1.5px dashed var(--line);border-radius:10px;padding:8px 4px;text-align:center;font-size:13px;color:var(--mute)}
+.stub b{display:block;font-size:18px;color:var(--ink)}
+.stub.ok{border:1.5px solid var(--ink);background:var(--ink);color:var(--bg)}
+.stub.ok b{color:var(--bg)}
+.stub.next{border-color:var(--ink);border-style:solid}
+.card{background:var(--card);border-radius:14px;padding:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>label{flex:1 1 140px}
+label{display:block;font-size:14px;font-weight:600;color:var(--mute);margin-top:10px}
+.row label,.card>label:first-child{margin-top:0}
+input{display:block;width:100%;margin-top:4px;font:16px Manrope,sans-serif;padding:10px 12px;min-height:44px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+input:focus-visible,button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #2a6df4;outline-offset:2px}
+button,.btn{font:700 16px Manrope,sans-serif;min-height:44px;padding:10px 16px;border-radius:10px;border:0;cursor:pointer;background:var(--ink);color:var(--bg);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+button:disabled{opacity:.4;cursor:default}
+.btn.wa{background:var(--wa);color:#fff}
+.ghost{background:transparent!important;color:var(--ink)!important;border:1.5px solid var(--line)!important}
+.danger{background:transparent;color:var(--red);border:1.5px solid var(--line)}
+.small{min-height:36px;padding:6px 12px;font-size:14px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.actions>*{flex:1 1 150px}
+pre{white-space:pre-wrap;word-break:break-word;font:15px/1.5 Manrope,sans-serif;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px;margin:0}
+.chk{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--ink)}
+.chk input{width:22px;height:22px;min-height:0;margin:0}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--mute);font-weight:600}
+td.n{text-align:right;white-space:nowrap}
+.empty{color:var(--mute);font-size:15px}
+details{margin-top:26px}summary{font-weight:800;cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:17px}
+.status{font-size:14px;color:var(--mute);margin-top:10px;min-height:20px}
+.list{display:grid;gap:10px}
+.item{display:block;text-decoration:none;color:var(--ink);background:var(--card);border-radius:14px;padding:14px 16px;border:1.5px solid transparent}
+.item:active{border-color:var(--ink)}
+.item .t{display:flex;justify-content:space-between;gap:10px;font-weight:800;font-size:17px}
+.item .t span:last-child{white-space:nowrap}
+.item .s{font-size:14px;color:var(--mute)}
+.item .bar{background:var(--line);margin-top:8px;height:6px}.item .bar i{background:var(--ink)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--y);color:var(--yi);vertical-align:2px}
+.banner{background:var(--card);border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:14px}
+.hero{text-align:center;padding:30px 10px}
+.hero img{width:96px;height:96px;border-radius:22px}
+.hero p{color:var(--mute);max-width:36ch;margin:10px auto 18px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<header>
+<a class="brand" href="#"><img src="icon.svg" alt="">Acerto</a>
+<button type="button" class="ghost small" id="installBtn" hidden>Instalar app</button>
+</header>
+<div id="view"></div>
+</main>
+
+<script>
+{
+const KEY = 'acerto.v1';
+const $ = id => document.getElementById(id);
+const V = $('view');
+const brl = v => (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+const dt = iso => { const [y, m, d] = String(iso || '').split('-'); return d ? `${d}/${m}/${y}` : ''; };
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const hoje = () => { const d = new Date(); return new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+const num = s => { s = String(s ?? '').trim().replace(/\s|R\$/g, ''); if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.'); const n = parseFloat(s); return isFinite(n) ? Math.round(n * 100) / 100 : NaN; };
+const fmtIn = n => n ? String(n.toFixed(2)).replace('.', ',') : '';
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+/* ---------- banco local ---------- */
+let DB = { acertos: [], recebidos: [] };
+try { DB = Object.assign(DB, JSON.parse(localStorage.getItem(KEY)) || {}); } catch {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(DB)); return true; } catch { return false; } };
+try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch {}
+const pago = a => a.pagamentos.reduce((s, p) => s + Number(p.valor || 0), 0);
+const parcVal = a => a.parcelas ? Math.round(a.total / a.parcelas * 100) / 100 : 0;
+const falta = a => Math.max(0, Math.round((a.total - pago(a)) * 100) / 100);
+const find = id => DB.acertos.find(a => a.id === id);
+
+/* ---------- link de atualização ---------- */
+const b64e = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const b64d = s => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/'))));
+const pack = a => b64e(JSON.stringify({ i: a.id, n: a.nome, it: a.item, t: a.total, p: a.parcelas, g: a.pagamentos.map(p => [p.data, p.valor]), u: hoje() }));
+const unpack = s => { const o = JSON.parse(b64d(s)); return { id: String(o.i), nome: String(o.n || ''), item: String(o.it || ''), total: Number(o.t) || 0, parcelas: Number(o.p) || 1, pagamentos: (o.g || []).map(x => ({ data: String(x[0]), valor: Number(x[1]) || 0 })), atualizado: String(o.u || '') }; };
+const base = () => location.origin + location.pathname;
+const shareUrl = a => base() + '#v=' + pack(a);
+
+function msg(a, hist) {
+  const n = a.pagamentos.length, ult = a.pagamentos[n - 1], P = a.parcelas, f = falta(a);
+  const t = [`*Acerto – ${a.item || 'venda'}*${a.nome ? ' · ' + a.nome : ''}`];
+  if (ult) t.push('', `✅ Parcela ${n} de ${P} descontada em ${dt(ult.data)}`, `Valor: ${brl(ult.valor)}`);
+  else t.push('', `Nenhuma parcela descontada ainda (${P} parcelas de ${brl(parcVal(a))}).`);
+  t.push('', `Pago até agora: ${brl(pago(a))} (${n} de ${P})`);
+  t.push(f > 0 ? `Falta: ${brl(f)} (${Math.max(0, P - n)} parcela${P - n === 1 ? '' : 's'})` : 'Quitado! 🎉');
+  if (hist && n) { t.push('', '*Histórico*'); a.pagamentos.forEach((p, i) => t.push(`${i + 1}/${P} – ${dt(p.data)} – ${brl(p.valor)}`)); }
+  t.push('', 'Acompanhe aqui:', shareUrl(a));
+  return t.join('\n');
+}
+
+/* ---------- pedaços de tela ---------- */
+function resumo(a) {
+  const n = a.pagamentos.length, P = a.parcelas;
+  let g = '';
+  for (let i = 0; i < Math.max(P, n); i++) {
+    const p = a.pagamentos[i];
+    g += p ? `<div class="stub ok"><b>${i + 1}</b>${esc(dt(p.data).slice(0, 5))}</div>`
+           : `<div class="stub${i === n ? ' next' : ''}"><b>${i + 1}</b>${i === n ? 'próxima' : '—'}</div>`;
+  }
+  return `<h1>Acerto · ${esc(a.item || 'venda')}</h1><p class="who">${esc(a.nome || 'Sem nome')}</p>
+  <section class="key"><small>${falta(a) > 0 ? 'Falta pagar' : 'Situação'}</small><b>${falta(a) > 0 ? esc(brl(falta(a))) : 'Quitado'}</b>
+  <div class="sub">${n} de ${P} parcelas pagas · ${esc(brl(pago(a)))} de ${esc(brl(a.total))}</div>
+  <div class="bar"><i style="width:${a.total ? Math.min(100, pago(a) / a.total * 100) : 0}%"></i></div></section>
+  <h2>Parcelas</h2><div class="carne">${g}</div>`;
+}
+function historico(a, editavel) {
+  if (!a.pagamentos.length) return '<h2>Histórico</h2><p class="empty">Nenhum desconto registrado ainda.</p>';
+  return `<h2>Histórico</h2><table><thead><tr><th>Parcela</th><th>Data</th><th style="text-align:right">Valor</th>${editavel ? '<th></th>' : ''}</tr></thead><tbody>${
+    a.pagamentos.map((p, i) => `<tr><td>${i + 1} de ${a.parcelas}</td><td>${esc(dt(p.data))}</td><td class="n">${esc(brl(p.valor))}</td>${editavel ? `<td class="n"><button type="button" class="danger small" data-del="${i}" aria-label="Apagar parcela ${i + 1}">Apagar</button></td>` : ''}</tr>`).join('')}</tbody></table>`;
+}
+
+/* ---------- telas ---------- */
+function telaInicio() {
+  const item = (a, href, extra) => `<a class="item" href="${href}"><div class="t"><span>${esc(a.nome || 'Sem nome')} ${extra}</span><span>${falta(a) > 0 ? esc(brl(falta(a))) : 'Quitado'}</span></div>
+    <div class="s">${esc(a.item || 'venda')} · ${a.pagamentos.length} de ${a.parcelas} pagas</div><div class="bar"><i style="width:${a.total ? Math.min(100, pago(a) / a.total * 100) : 0}%"></i></div></a>`;
+  const meus = DB.acertos.map(a => item(a, '#a-' + a.id, '')).join('');
+  const rec = DB.recebidos.map(a => item(a, '#r-' + a.id, '<span class="tag">recebido</span>')).join('');
+  if (!meus && !rec) {
+    V.innerHTML = `<div class="hero"><img src="icon.svg" alt=""><h2>Seus acertos num lugar só</h2>
+    <p>Registre cada parcela descontada e mande o resumo pronto no WhatsApp. Tudo fica salvo neste celular.</p>
+    <a class="btn" href="#novo">Novo acerto</a></div>${backupHtml()}`;
+  } else {
+    V.innerHTML = `<div class="actions" style="margin-top:0"><a class="btn" href="#novo">Novo acerto</a></div>
+    ${meus ? `<h2>Meus acertos</h2><div class="list">${meus}</div>` : ''}
+    ${rec ? `<h2>Recebidos</h2><div class="list">${rec}</div>` : ''}${backupHtml()}`;
+  }
+  ligarBackup();
+}
+
+function telaForm(a) {
+  const novo = !a; a = a || { nome: '', item: 'Celular', total: 0, parcelas: 13 };
+  V.innerHTML = `<h2 style="margin-top:0">${novo ? 'Novo acerto' : 'Editar acerto'}</h2>
+  <form class="card" id="f">
+    <label>Nome da pessoa<input id="fNome" value="${esc(a.nome)}" autocomplete="off" required></label>
+    <div class="row" style="margin-top:10px"><label>O que foi vendido<input id="fItem" value="${esc(a.item)}"></label>
+    <label>Nº de parcelas<input id="fParc" type="number" min="1" step="1" inputmode="numeric" value="${a.parcelas}" required></label></div>
+    <label>Valor total (R$)<input id="fTotal" inputmode="decimal" value="${esc(fmtIn(a.total))}" placeholder="Ex.: 1.300,00" required></label>
+    <div class="status" id="fMsg"></div>
+    <div class="actions"><button type="submit">${novo ? 'Criar acerto' : 'Salvar'}</button><a class="btn ghost" href="${novo ? '#' : '#a-' + a.id}">Cancelar</a></div>
+  </form>${novo ? '' : '<div class="actions"><button type="button" class="danger" id="fDel">Excluir este acerto</button></div>'}`;
+  $('f').addEventListener('submit', e => {
+    e.preventDefault();
+    const total = num($('fTotal').value), parcelas = parseInt($('fParc').value);
+    if (!(total > 0) || !(parcelas > 0)) { $('fMsg').textContent = 'Confira o valor total e o número de parcelas.'; return; }
+    const dados = { nome: $('fNome').value.trim(), item: $('fItem').value.trim() || 'venda', total, parcelas };
+    if (novo) { const n = { id: uid(), pagamentos: [], criado: hoje(), ...dados }; DB.acertos.unshift(n); save(); location.hash = 'a-' + n.id; }
+    else { Object.assign(a, dados); save(); location.hash = 'a-' + a.id; }
+  });
+  if (!novo) $('fDel').addEventListener('click', () => {
+    if (!confirm(`Excluir o acerto de ${a.nome || 'sem nome'}? Isso não pode ser desfeito.`)) return;
+    DB.acertos = DB.acertos.filter(x => x.id !== a.id); save(); location.hash = '';
+  });
+}
+
+function blocoMensagem(a) {
+  return `<h2>Mensagem para o WhatsApp</h2><div class="card"><pre id="msg"></pre>
+  <label class="chk" style="margin-top:10px"><input type="checkbox" id="hist"> Incluir histórico completo</label>
+  <div class="actions"><a class="btn wa" id="wa" href="#" target="_blank" rel="noopener">Enviar no WhatsApp</a><button type="button" class="ghost" id="copy">Copiar texto</button></div>
+  <div class="status" id="copyMsg"></div></div>`;
+}
+function ligarMensagem(a) {
+  const upd = () => { const m = msg(a, $('hist').checked); $('msg').textContent = m; $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(m); };
+  $('hist').addEventListener('change', upd); upd();
+  $('copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(msg(a, $('hist').checked)); $('copyMsg').textContent = 'Copiado. É só colar no WhatsApp.'; }
+    catch { $('copyMsg').textContent = 'Não deu para copiar: segure o texto acima e copie.'; }
+  });
+}
+
+function telaAcerto(a) {
+  const n = a.pagamentos.length, cheio = n >= a.parcelas;
+  V.innerHTML = resumo(a) + `
+  <h2>${cheio ? 'Todas as parcelas registradas' : `Registrar parcela ${n + 1} de ${a.parcelas}`}</h2>
+  <form class="card" id="reg">
+    <div class="row"><label>Data do desconto<input type="date" id="rData" value="${hoje()}" required></label>
+    <label>Valor (R$)<input id="rValor" inputmode="decimal" value="${esc(fmtIn(parcVal(a)))}" required></label></div>
+    <div class="actions"><button type="submit" ${cheio ? 'disabled' : ''}>Registrar parcela</button></div>
+    <div class="status" id="rMsg" aria-live="polite"></div>
+  </form>` + blocoMensagem(a) + historico(a, true) +
+  `<div class="actions" style="margin-top:22px"><a class="btn ghost" href="#e-${a.id}">Editar acerto</a><a class="btn ghost" href="#">Voltar</a></div>`;
+  $('reg').addEventListener('submit', e => {
+    e.preventDefault();
+    if (a.pagamentos.length >= a.parcelas) return;
+    const valor = num($('rValor').value), data = $('rData').value;
+    if (!data || !(valor >= 0)) { $('rMsg').textContent = 'Confira a data e o valor.'; return; }
+    a.pagamentos.push({ data, valor }); a.pagamentos.sort((x, y) => x.data < y.data ? -1 : x.data > y.data ? 1 : 0);
+    save(); telaAcerto(a); $('rMsg').textContent = `Parcela registrada. Agora é só enviar a mensagem.`;
+    $('msg').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+  });
+  V.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => {
+    const i = +b.dataset.del, p = a.pagamentos[i];
+    if (!confirm(`Apagar a parcela ${i + 1} (${dt(p.data)}, ${brl(p.valor)})?`)) return;
+    a.pagamentos.splice(i, 1); save(); telaAcerto(a);
+  }));
+  ligarMensagem(a);
+}
+
+function telaRecebido(a, veioDoLink) {
+  V.innerHTML = `<div class="banner">${veioDoLink ? 'Acerto atualizado e salvo neste aparelho. ' : ''}Só leitura${a.atualizado ? ` · enviado em ${esc(dt(a.atualizado))}` : ''}. Quando chegar um link novo no WhatsApp, abra para atualizar.</div>`
+    + resumo(a) + historico(a, false) +
+    `<div class="actions" style="margin-top:22px"><a class="btn ghost" href="#">Ver todos</a><button type="button" class="danger" id="rmRec">Remover deste aparelho</button></div>`;
+  $('rmRec').addEventListener('click', () => {
+    if (!confirm('Remover este acerto recebido deste aparelho?')) return;
+    DB.recebidos = DB.recebidos.filter(x => x.id !== a.id); save(); location.hash = '';
+  });
+}
+
+/* ---------- backup ---------- */
+function backupHtml() {
+  return `<details><summary>Backup e troca de celular</summary><div class="card">
+  <p class="empty" style="margin-top:0">Os dados ficam só neste aparelho. Salve um backup de vez em quando e guarde no Drive ou no próprio WhatsApp.</p>
+  <div class="actions"><button type="button" id="bkOut">Salvar backup</button><label class="btn ghost" style="margin:0;color:var(--ink)">Restaurar backup<input type="file" id="bkIn" accept=".json,application/json" hidden></label></div>
+  <div class="status" id="bkMsg"></div></div></details>`;
+}
+function ligarBackup() {
+  $('bkOut').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify({ app: 'acerto', versao: 1, salvoEm: new Date().toISOString(), ...DB }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `acerto-backup-${hoje()}.json`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    $('bkMsg').textContent = 'Backup salvo em Downloads.';
+  });
+  $('bkIn').addEventListener('change', async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const o = JSON.parse(await f.text());
+      if (o.app !== 'acerto' || !Array.isArray(o.acertos)) throw 0;
+      if (!confirm(`Restaurar ${o.acertos.length} acerto(s) deste backup? Os dados atuais deste aparelho serão substituídos.`)) return;
+      DB = { acertos: o.acertos, recebidos: Array.isArray(o.recebidos) ? o.recebidos : [] }; save(); telaInicio();
+      $('bkMsg').textContent = 'Backup restaurado.';
+    } catch { $('bkMsg').textContent = 'Esse arquivo não é um backup do Acerto.'; }
+  });
+}
+
+/* ---------- rotas ---------- */
+function rota() {
+  const h = location.hash.slice(1);
+  window.scrollTo(0, 0);
+  if (h.startsWith('v=')) {
+    try {
+      const r = unpack(h.slice(2));
+      const meu = find(r.id);
+      if (meu) { location.replace('#a-' + meu.id); return; }
+      const i = DB.recebidos.findIndex(x => x.id === r.id);
+      if (i >= 0) DB.recebidos[i] = r; else DB.recebidos.unshift(r);
+      save(); history.replaceState(null, '', '#r-' + r.id); telaRecebido(r, true);
+    } catch { V.innerHTML = '<p class="empty">Esse link de acerto está incompleto. Peça para enviarem de novo.</p><a class="btn" href="#">Início</a>'; }
+    return;
+  }
+  if (h === 'novo') return telaForm(null);
+  if (h.startsWith('e-') && find(h.slice(2))) return telaForm(find(h.slice(2)));
+  if (h.startsWith('a-') && find(h.slice(2))) return telaAcerto(find(h.slice(2)));
+  if (h.startsWith('r-')) { const r = DB.recebidos.find(x => x.id === h.slice(2)); if (r) return telaRecebido(r, false); }
+  telaInicio();
+}
+addEventListener('hashchange', rota);
+rota();
+
+/* ---------- instalar / offline ---------- */
+let pedido = null;
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); pedido = e; $('installBtn').hidden = false; });
+$('installBtn').addEventListener('click', async () => { if (!pedido) return; pedido.prompt(); await pedido.userChoice; pedido = null; $('installBtn').hidden = true; });
+if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
